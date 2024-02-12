@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Subscription Form</title>
+</head>
+<body>
+    <h2>Email Subscription Form</h2>
+    <form id="subscriptionForm">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name"><br>
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email"><br><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById('subscriptionForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Get form data
+            const formData = new FormData(event.target);
+            const name = formData.get('name');
+            const email = formData.get('email');
+
+            // Prepare data for Brevo API
+            const data = {
+                to: email,
+                subject: "Thanks for Subscribing",
+                body: "Thanks for subscribing, " + name + "!"
+            };
+
+            // Call Brevo API to send email
+            fetch('https://api.brevo.com/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Use your Brevo API key here
+                    'Authorization': 'Bearer Varsha@001'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Email sent successfully!');
+                    // Clear form fields after successful submission
+                    document.getElementById('subscriptionForm').reset();
+                } else {
+                    throw new Error('Failed to send email');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to send email. Please try again later.');
+            });
+        });
+    </script>
+</body>
+</html>
